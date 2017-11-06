@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <p class="lead">GENOME LINK example</p>
+      </div>
+
+      <% if (authorize_url) { %>
+      <a href="<%= authorize_url %>" class="btn btn-default">Connect with genome</a>
+      <% } %>
+
+      <% if (report) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Genetic insights</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><%= report.phenotype %></th>
+            <td><%= report.summary %></td>
+          </tr>
+        </tbody>
+      </table>
+      <% } %>
+
+    </div>
+  </body>
+</html>

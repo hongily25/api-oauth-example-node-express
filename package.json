@@ -1,0 +1,13 @@
+{
+  "name": "GENOME-LINK-Example-Node-Express-App",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "latest",
+    "ejs": "latest",
+    "request": "latest"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
