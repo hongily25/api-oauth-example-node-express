@@ -5,8 +5,9 @@
   "dependencies": {
     "ejs": "latest",
     "express": "latest",
-    "request": "latest",
-    "genomelink-node": "git+ssh://git@github.com:knmkr/genomelink-node.git"
+    "express-session": "^1.15.6",
+    "genomelink-node": "git+ssh://git@github.com:knmkr/genomelink-node.git",
+    "request": "latest"
   },
   "scripts": {
     "start": "node app.js"
