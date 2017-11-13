@@ -13,7 +13,7 @@
       <a href="<%= authorize_url %>" class="btn btn-default">Connect with genome</a>
       <% } %>
 
-      <% if (report) { %>
+      <% if (reports.length > 0) { %>
       <table class="table">
         <thead>
           <tr>
@@ -22,10 +22,12 @@
           </tr>
         </thead>
         <tbody>
+          <% for (let report of reports) { %>
           <tr>
-            <th scope="row"><%= report.phenotype %></th>
-            <td><%= report.summary %></td>
+            <th scope="row"><%= report.phenotype.display_name %></th>
+            <td><%= report.summary.text %></td>
           </tr>
+          <% } %>
         </tbody>
       </table>
       <% } %>

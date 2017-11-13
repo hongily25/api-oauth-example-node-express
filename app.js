@@ -1,79 +1,56 @@
 const express = require('express');
-const request = require('request');
+const session = require('express-session');
+const genomeLink = require('genomelink-node');
 
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-const client_id = process.env.GENOMELINK_CLIENT_ID;
-const client_secret = process.env.GENOMELINK_CLIENT_SECRET;
-const redirect_uri = process.env.GENOMELINK_CALLBACK_URL;
-const scope = 'report:eye-color';
-// const scope = 'report:eye-color report:beard-thickness report:morning-person';
-const authorize_url = `http://localhost:8000/oauth/authorize?redirect_uri=${redirect_uri}&client_id=${client_id}&response_type=code&scope=${scope}`;
+app.use(session({
+  secret: 'YOURSECRET',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 30 * 60 * 1000
+  }
+}));
 
-app.get('/', function(req, res) {
+app.get('/', async (req, res) => {
+  const scope = 'report:eye-color report:beard-thickness report:morning-person';
+  const authorizeUrl = genomeLink.OAuth.authorizeUrl({ scope: scope });
+
+  // Fetching a protected resource using an OAuth2 token if exists.
+  let reports = [];
+  if (req.session.oauthToken) {
+    const scopes = scope.split(' ');
+    reports = await Promise.all(scopes.map( async (name) => {
+      return await genomeLink.Report.fetch({
+        name: name.replace(/report:/g, ''),
+        population: 'european',
+        token: req.session.oauthToken
+      });
+    }));
+  }
+
   res.render('index', {
-    authorize_url: authorize_url,
-    report: undefined,
+    authorize_url: authorizeUrl,
+    reports: reports,
   });
 });
 
-app.get('/callback', function(req, res) {
+app.get('/callback', async (req, res) => {
   // The user has been redirected back from the provider to your registered
   // callback URL. With this redirection comes an authorization code included
   // in the request URL. We will use that to obtain an access token.
-  const authorization_code = req.query.code;
+  req.session.oauthToken = await genomeLink.OAuth.token({ requestUrl: req.url });
 
-  request.post({
-    url: 'http://localhost:8000/oauth/token',
-    json: true,
-    form: {
-      grant_type:    'authorization_code',
-      code:          authorization_code,
-      client_id:     client_id,
-      client_secret: client_secret,
-      redirect_uri:  redirect_uri,
-    }
-  }, (err, httpResponse, body) => {
-    if (err) {
-      return console.error('failed to fetch token:', err);
-    }
-
-    // At this point you can fetch protected resources.
-    // So, fetch a protected resource using an OAuth2 token.
-    const token =  body.access_token;
-    // const report = [];
-
-    // TODO: call multiple reports
-    ['eye-color'].forEach((name, idx) => {
-
-      // TODO: async/await foreach API call (?)
-      request.get({
-        url: `http://localhost:8000/v1/reports/${name}?population=european`,
-        json: true,
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }, (err, httpResponse, body) => {
-        if (err) {
-          return console.error('failed to fetch report:', err);
-        }
-
-        // TODO: move outside of this callback
-        res.render('index', {
-          authorize_url: authorize_url,
-          report: JSON.stringify(body)
-        });
-
-      });
-    });
-
-  });
+  // At this point you can fetch protected resources but lets save
+  // the token and show how this is done from a persisted token in index page.
+  res.redirect('/');
 });
 
 // Run local server on port 3000.
 const port = process.env.PORT || 3000;
 const server = app.listen(port, function () {
-  console.log('Server running at http://localhost:' + port + '/');
+  console.log('Server running at http://127.0.0.1:' + port + '/');
 });
