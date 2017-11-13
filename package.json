@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "latest",
     "ejs": "latest",
-    "request": "latest"
+    "express": "latest",
+    "request": "latest",
+    "genomelink-node": "git+ssh://git@github.com:knmkr/genomelink-node.git"
   },
   "scripts": {
     "start": "node app.js"
