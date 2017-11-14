@@ -6,7 +6,7 @@
     "ejs": "latest",
     "express": "latest",
     "express-session": "^1.15.6",
-    "genomelink-node": "git+ssh://git@github.com:knmkr/genomelink-node.git",
+    "genomelink-node": "latest",
     "request": "latest"
   },
   "scripts": {
