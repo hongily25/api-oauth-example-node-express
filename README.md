@@ -17,6 +17,7 @@ Set scopes (whitelists) in "Authorization scopes" panel.
 
 ### Run your app
 
+
 ```
 $ npm install
 $ export GENOMELINK_CLIENT_ID=<your_client_id>
@@ -27,10 +28,13 @@ $ node app.js
 
 then, visit `http://127.0.0.1:3000`
 
+Use 'set' for Windows.
+
 ## How it works
 
 See https://github.com/AWAKENS-dev/api-oauth-example-flask/issues/1
 
 ## Requirements
 
-Node >= 8.9.0
+Node v8.9.0 or later
+
